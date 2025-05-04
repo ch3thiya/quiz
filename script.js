@@ -1,5 +1,3 @@
-
-// Quiz questions and answers
 const quizQuestions = [
     {
         category: "Basic Concepts & Architectures",
@@ -630,13 +628,11 @@ const quizQuestions = [
     }
 ];
 
-// Quiz state variables
 let currentQuestionIndex = 0;
 let score = 0;
 let userAnswers = [];
 let answeredQuestions = [];
 
-// DOM elements
 const questionText = document.getElementById("question-text");
 const optionsContainer = document.getElementById("options-container");
 const progressText = document.getElementById("progress-text");
@@ -652,45 +648,34 @@ const resultDetailsElement = document.getElementById("result-details");
 const restartButton = document.getElementById("restart-btn");
 const categoryScoresElement = document.getElementById("category-scores");
 
-// Initialize the quiz
 function initQuiz() {
-    // Initialize arrays
     userAnswers = new Array(quizQuestions.length).fill(null);
     answeredQuestions = new Array(quizQuestions.length).fill(false);
     
-    // Reset score
     score = 0;
     currentQuestionIndex = 0;
     
-    // Show first question
     showQuestion(currentQuestionIndex);
     
-    // Hide results, show quiz
     quizContent.style.display = "block";
     resultsContainer.style.display = "none";
     
-    // Update UI
     updateProgressBar();
     updateScore();
 }
 
-// Show question
 function showQuestion(index) {
     const question = quizQuestions[index];
     
-    // Display question
     questionText.textContent = `${index + 1}. ${question.question}`;
     
-    // Clear options
     optionsContainer.innerHTML = "";
     
-    // Add options
     question.options.forEach((option, i) => {
         const optionElement = document.createElement("div");
         optionElement.classList.add("option");
         optionElement.textContent = option;
         
-        // If question was already answered, show feedback
         if (answeredQuestions[index]) {
             if (option.startsWith(userAnswers[index])) {
                 optionElement.classList.add("selected");
@@ -704,7 +689,6 @@ function showQuestion(index) {
                 optionElement.classList.add("correct");
             }
         } else {
-            // Add click event if not answered yet
             optionElement.addEventListener("click", function() {
                 selectOption(index, option.charAt(0));
             });
@@ -713,16 +697,13 @@ function showQuestion(index) {
         optionsContainer.appendChild(optionElement);
     });
     
-    // Update progress text
     progressText.textContent = `Question ${index + 1} of ${quizQuestions.length}`;
     
-    // Enable/disable navigation buttons
     previousButton.disabled = index === 0;
     
     if (answeredQuestions[index]) {
         nextButton.disabled = false;
         
-        // Show feedback
         if (userAnswers[index] === question.answer) {
             feedbackElement.textContent = "Correct! Well done.";
             feedbackElement.className = "feedback correct-feedback";
@@ -737,53 +718,42 @@ function showQuestion(index) {
     }
 }
 
-// Select option
 function selectOption(questionIndex, selectedOption) {
-    // If already answered, do nothing
     if (answeredQuestions[questionIndex]) return;
     
-    // Store user answer
     userAnswers[questionIndex] = selectedOption;
     answeredQuestions[questionIndex] = true;
     
-    // Check if correct
     const question = quizQuestions[questionIndex];
     if (selectedOption === question.answer) {
         score++;
     }
     
-    // Update UI
     updateScore();
     showQuestion(questionIndex);
     
-    // Enable next button
     nextButton.disabled = false;
 }
 
-// Update score
 function updateScore() {
     scoreText.textContent = `Score: ${score}/${answeredQuestions.filter(Boolean).length}`;
 }
 
-// Update progress bar
 function updateProgressBar() {
     const progress = (currentQuestionIndex / quizQuestions.length) * 100;
     progressFill.style.width = `${progress}%`;
 }
 
-// Navigate to next question
 function nextQuestion() {
     if (currentQuestionIndex < quizQuestions.length - 1) {
         currentQuestionIndex++;
         showQuestion(currentQuestionIndex);
         updateProgressBar();
     } else {
-        // Show results if all questions answered
         showResults();
     }
 }
 
-// Navigate to previous question
 function previousQuestion() {
     if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
@@ -792,16 +762,12 @@ function previousQuestion() {
     }
 }
 
-// Show quiz results
 function showResults() {
-    // Hide quiz, show results
     quizContent.style.display = "none";
     resultsContainer.style.display = "block";
     
-    // Display final score
     finalScoreElement.textContent = `${score}/${quizQuestions.length}`;
     
-    // Calculate category scores
     const categories = {};
     
     quizQuestions.forEach((question, index) => {
@@ -819,7 +785,6 @@ function showResults() {
         }
     });
     
-    // Display category scores
     categoryScoresElement.innerHTML = "<h3>Category Breakdown:</h3>";
     
     Object.keys(categories).forEach(category => {
@@ -831,10 +796,8 @@ function showResults() {
         categoryScoresElement.appendChild(categoryElement);
     });
     
-    // Show question review
     resultDetailsElement.innerHTML = "<h3>Question Review:</h3>";
     
-    // Group questions by category
     const questionsByCategory = {};
     
     quizQuestions.forEach((question, index) => {
@@ -850,7 +813,6 @@ function showResults() {
         });
     });
     
-    // Display questions by category
     Object.keys(questionsByCategory).forEach(category => {
         const categoryHeading = document.createElement("div");
         categoryHeading.className = "category-heading";
@@ -881,10 +843,8 @@ function showResults() {
     });
 }
 
-// Event listeners
 nextButton.addEventListener("click", nextQuestion);
 previousButton.addEventListener("click", previousQuestion);
 restartButton.addEventListener("click", initQuiz);
 
-// Initialize the quiz on page load
 initQuiz();
